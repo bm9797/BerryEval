@@ -46,9 +46,7 @@ class PineconeAdapter(RetrieverAdapter):
         self._namespace = namespace
         self._embedding_model = embedding_model
         self._openai = (
-            OpenAI(api_key=embedding_api_key)
-            if embedding_api_key
-            else OpenAI()
+            OpenAI(api_key=embedding_api_key) if embedding_api_key else OpenAI()
         )
 
     def _embed(self, text: str) -> list[float]:

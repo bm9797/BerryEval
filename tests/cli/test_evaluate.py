@@ -328,3 +328,98 @@ class TestEvaluateCommand:
         assert result.exit_code == 0
         assert output_dir.exists()
         assert len(list(output_dir.glob("berryeval_run_*.json"))) == 1
+
+
+class TestEvaluateThresholds:
+    """Tests for the --fail-below threshold feature on evaluate."""
+
+    def _invoke_with_fail_below(
+        self,
+        tmp_path: Path,
+        fail_below: str,
+        *,
+        json_mode: bool = False,
+    ):
+        dataset_path = tmp_path / "dataset.jsonl"
+        config_path = tmp_path / "eval.yaml"
+        _write_test_dataset(dataset_path)
+        _write_test_config(config_path)
+
+        with (
+            patch("berryeval.cli.evaluate.get_adapter_class", return_value=MockAdapter),
+            patch("berryeval.cli.evaluate.EvaluationRunner") as runner_cls,
+        ):
+            mock_runner = MagicMock()
+            mock_runner.run.return_value = _make_mock_result(dataset_path)
+            runner_cls.return_value = mock_runner
+
+            args: list[str] = []
+            if json_mode:
+                args.append("--json")
+            args.extend(
+                [
+                    "evaluate",
+                    str(dataset_path),
+                    "--config",
+                    str(config_path),
+                    "--output",
+                    str(tmp_path / "results"),
+                    "--fail-below",
+                    fail_below,
+                ]
+            )
+
+            return runner.invoke(app, args)
+
+    def test_evaluate_fail_below_pass(self, tmp_path: Path) -> None:
+        result = self._invoke_with_fail_below(tmp_path, "recall@2=0.60")
+        assert result.exit_code == 0
+
+    def test_evaluate_fail_below_fail(self, tmp_path: Path) -> None:
+        result = self._invoke_with_fail_below(tmp_path, "recall@2=0.90")
+        assert result.exit_code == 1
+
+    def test_evaluate_fail_below_json_output(self, tmp_path: Path) -> None:
+        result = self._invoke_with_fail_below(tmp_path, "recall@2=0.90", json_mode=True)
+        assert result.exit_code == 1
+        payload = json.loads(result.output)
+        assert "threshold_results" in payload
+        assert payload["thresholds_passed"] is False
+
+    def test_evaluate_fail_below_pass_json(self, tmp_path: Path) -> None:
+        result = self._invoke_with_fail_below(tmp_path, "recall@2=0.60", json_mode=True)
+        assert result.exit_code == 0
+        payload = json.loads(result.output)
+        assert payload["thresholds_passed"] is True
+
+    def test_evaluate_fail_below_invalid_format(self, tmp_path: Path) -> None:
+        result = self._invoke_with_fail_below(tmp_path, "bad")
+        assert result.exit_code != 0
+
+    def test_evaluate_no_fail_below(self, tmp_path: Path) -> None:
+        dataset_path = tmp_path / "dataset.jsonl"
+        config_path = tmp_path / "eval.yaml"
+        _write_test_dataset(dataset_path)
+        _write_test_config(config_path)
+
+        with (
+            patch("berryeval.cli.evaluate.get_adapter_class", return_value=MockAdapter),
+            patch("berryeval.cli.evaluate.EvaluationRunner") as runner_cls,
+        ):
+            mock_runner = MagicMock()
+            mock_runner.run.return_value = _make_mock_result(dataset_path)
+            runner_cls.return_value = mock_runner
+
+            result = runner.invoke(
+                app,
+                [
+                    "evaluate",
+                    str(dataset_path),
+                    "--config",
+                    str(config_path),
+                    "--output",
+                    str(tmp_path / "results"),
+                ],
+            )
+
+        assert result.exit_code == 0

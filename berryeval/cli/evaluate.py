@@ -13,12 +13,14 @@ from rich.table import Table
 
 from berryeval.cli._app import app
 from berryeval.cli._output import console, output_error, output_result
+from berryeval.comparison.thresholds import check_thresholds, parse_thresholds
 from berryeval.config.eval_config import load_eval_config
 from berryeval.persistence.results import save_result
 from berryeval.retrievers.base import get_adapter_class
 from berryeval.runner.evaluator import EvaluationRunner
 
 if TYPE_CHECKING:
+    from berryeval.comparison.types import ThresholdResult
     from berryeval.persistence.types import RunResult
 
 
@@ -81,6 +83,36 @@ def _display_human_results(result: RunResult, result_path: Path) -> None:
     console.print(f"\n[dim]Results saved to: {result_path}[/dim]")
 
 
+def _display_threshold_results(threshold_results: list[ThresholdResult]) -> None:
+    """Display threshold check results in a Rich table."""
+    threshold_table = Table(title="Threshold Check")
+    threshold_table.add_column("Metric", style="cyan")
+    threshold_table.add_column("Threshold", justify="right")
+    threshold_table.add_column("Actual", justify="right")
+    threshold_table.add_column("Result")
+
+    all_passed = True
+    for tr in threshold_results:
+        if tr.passed:
+            result_str = "[green]PASS[/green]"
+        else:
+            result_str = "[red]FAIL[/red]"
+            all_passed = False
+
+        threshold_table.add_row(
+            tr.metric_name,
+            f"{tr.threshold:.4f}",
+            f"{tr.actual:.4f}",
+            result_str,
+        )
+
+    console.print(threshold_table)
+    if all_passed:
+        console.print("[green]All thresholds passed.[/green]")
+    else:
+        console.print("[red]Some thresholds failed.[/red]")
+
+
 @app.command()
 def evaluate(
     dataset: Annotated[
@@ -89,7 +121,9 @@ def evaluate(
     ],
     config: Annotated[
         Path,
-        typer.Option("--config", "-c", help="Path to evaluation YAML config file", exists=True),
+        typer.Option(
+            "--config", "-c", help="Path to evaluation YAML config file", exists=True
+        ),
     ],
     output: Annotated[
         Path,
@@ -102,6 +136,16 @@ def evaluate(
         str | None,
         typer.Option("--k", help="Override k values (comma-separated, e.g. '5,10,20')"),
     ] = None,
+    fail_below: Annotated[
+        str | None,
+        typer.Option(
+            "--fail-below",
+            help=(
+                "Threshold string, e.g. 'recall@10=0.80,precision@5=0.60'. "
+                "Exit 1 if any metric fails."
+            ),
+        ),
+    ] = None,
 ) -> None:
     """Run retrieval evaluation against a dataset."""
     try:
@@ -112,7 +156,9 @@ def evaluate(
 
     if k_values is not None:
         try:
-            parsed = [int(value.strip()) for value in k_values.split(",") if value.strip()]
+            parsed = [
+                int(value.strip()) for value in k_values.split(",") if value.strip()
+            ]
             if not parsed or any(value < 1 for value in parsed):
                 raise ValueError
             eval_config.evaluation.k_values = parsed
@@ -146,8 +192,28 @@ def evaluate(
 
     result_path = save_result(result, output)
 
-    payload = result.model_dump(mode="python")
-    output_result(
-        payload,
-        human_fn=lambda _data: _display_human_results(result, result_path),
-    )
+    threshold_results: list[ThresholdResult] | None = None
+    if fail_below is not None:
+        try:
+            thresholds = parse_thresholds(fail_below)
+        except ValueError as exc:
+            output_error(f"Invalid threshold format: {exc}")
+            return
+        threshold_results = check_thresholds(result, thresholds)
+
+    payload: dict[str, object] = result.model_dump(mode="python")
+    if threshold_results is not None:
+        payload["threshold_results"] = [
+            tr.model_dump(mode="python") for tr in threshold_results
+        ]
+        payload["thresholds_passed"] = all(tr.passed for tr in threshold_results)
+
+    def _human_output(_data: dict[str, object]) -> None:
+        _display_human_results(result, result_path)
+        if threshold_results is not None:
+            _display_threshold_results(threshold_results)
+
+    output_result(payload, human_fn=_human_output)
+
+    if threshold_results is not None and not all(tr.passed for tr in threshold_results):
+        raise typer.Exit(code=1)

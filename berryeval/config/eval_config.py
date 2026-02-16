@@ -69,10 +69,7 @@ def _substitute_env_vars(value: str) -> str:
         var_name = match.group(1)
         env_value = os.environ.get(var_name)
         if env_value is None:
-            msg = (
-                f"Environment variable '{var_name}' is not set "
-                "(referenced in config)"
-            )
+            msg = f"Environment variable '{var_name}' is not set (referenced in config)"
             raise ValueError(msg)
         return env_value
 
@@ -84,7 +81,9 @@ def _substitute_env_vars_recursive(obj: Any) -> Any:
     if isinstance(obj, str):
         return _substitute_env_vars(obj)
     if isinstance(obj, dict):
-        return {key: _substitute_env_vars_recursive(value) for key, value in obj.items()}
+        return {
+            key: _substitute_env_vars_recursive(value) for key, value in obj.items()
+        }
     if isinstance(obj, list):
         return [_substitute_env_vars_recursive(item) for item in obj]
     return obj

@@ -99,9 +99,7 @@ class EvaluationRunner:
         relevant_array = self._build_padded_array(mapped_relevant, width=max_relevant)
 
         metric_values: list[MetricValue] = []
-        per_query_scores: list[dict[str, float]] = [
-            {} for _ in range(len(records))
-        ]
+        per_query_scores: list[dict[str, float]] = [{} for _ in range(len(records))]
 
         metric_fns = {
             "recall": metrics.recall_at_k,

@@ -208,9 +208,7 @@ class TestEvaluationRunner:
         dataset_path = tmp_path / "dataset.jsonl"
         _write_dataset(dataset_path, records)
 
-        retriever = MockRetriever(
-            {"q1": [RetrievedDocument(doc_id="doc1", score=1.0)]}
-        )
+        retriever = MockRetriever({"q1": [RetrievedDocument(doc_id="doc1", score=1.0)]})
         config = _make_config(k_values=[1], metrics=["recall"], per_query=False)
 
         result = EvaluationRunner(retriever, config).run(dataset_path)
@@ -241,9 +239,7 @@ class TestEvaluationRunner:
         dataset_path = tmp_path / "dataset.jsonl"
         _write_dataset(dataset_path, records)
 
-        retriever = MockRetriever(
-            {"q1": [RetrievedDocument(doc_id="doc1", score=1.0)]}
-        )
+        retriever = MockRetriever({"q1": [RetrievedDocument(doc_id="doc1", score=1.0)]})
         config = _make_config(k_values=[1], metrics=["recall", "mrr"])
 
         result = EvaluationRunner(retriever, config).run(dataset_path)
