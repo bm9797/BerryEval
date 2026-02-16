@@ -10,6 +10,9 @@ requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = [
     "numpy>=2.0",
+    "typer[all]>=0.15.0",
+    "rich>=13.9.0",
+    "openai>=1.60.0",
 ]
 
 [project.optional-dependencies]
