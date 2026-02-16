@@ -1,6 +1,10 @@
 # Planning docs - local only
 .planning/
 
+# Project docs (local only)
+*.pdf
+backend-developer.md
+
 # Python
 __pycache__/
 *.py[cod]
@@ -42,3 +46,18 @@ htmlcov/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+Makefile
+
+# Python packaging
+*.whl
+pip-wheel-metadata/
+*.manifest
+*.spec
+MANIFEST
+
+# Ruff
+.ruff_cache/
+
+# Environments
+*.env
+.env
