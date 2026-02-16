@@ -30,10 +30,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. System executes deterministically with same inputs producing identical outputs across runs
   4. NumPy array interface contracts are defined and documented for future C integration
   5. Build system and development tooling (Ruff, mypy, pytest) are configured and enforced in CI
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Project scaffolding, pyproject.toml, directory structure, development tooling
+- [ ] 01-02-PLAN.md — Pure Python IR metrics (recall@k, precision@k, MRR, nDCG, hit rate) with TDD
+- [ ] 01-03-PLAN.md — GitHub Actions CI pipeline and C extension fallback mechanism
 
 ### Phase 2: Dataset Generation & CLI
 **Goal**: Users can generate versioned synthetic evaluation datasets from their corpus and interact with BerryEval through a CLI
@@ -106,7 +108,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Core Infrastructure | 0/0 | Not started | - |
+| 1. Foundation & Core Infrastructure | 0/3 | Planned | - |
 | 2. Dataset Generation & CLI | 0/0 | Not started | - |
 | 3. Evaluation Engine | 0/0 | Not started | - |
 | 4. Comparison & CI Integration | 0/0 | Not started | - |
