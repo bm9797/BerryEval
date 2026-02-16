@@ -162,7 +162,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | METR-05 | Phase 3 | Pending |
 | METR-06 | Phase 3 | Pending |
 | METR-07 | Phase 3 | Pending |
-| METR-08 | Phase 3 | Pending |
+| METR-08 | Phase 1 | Pending |
 | COMP-01 | Phase 4 | Pending |
 | COMP-02 | Phase 4 | Pending |
 | COMP-03 | Phase 4 | Pending |
@@ -172,23 +172,30 @@ Deferred to future release. Tracked but not in current roadmap.
 | NATV-01 | Phase 5 | Pending |
 | NATV-02 | Phase 5 | Pending |
 | NATV-03 | Phase 5 | Pending |
-| NATV-04 | Phase 5 | Pending |
-| NATV-05 | Phase 5 | Pending |
-| NATV-06 | Phase 5 | Pending |
-| NATV-07 | Phase 5 | Pending |
+| NATV-04 | Phase 1 | Pending |
+| NATV-05 | Phase 1 | Pending |
+| NATV-06 | Phase 1 | Pending |
+| NATV-07 | Phase 1 | Pending |
 | NATV-08 | Phase 5 | Pending |
 | PERF-01 | Phase 5 | Pending |
 | PERF-02 | Phase 5 | Pending |
-| PERF-03 | Phase 3 | Pending |
+| PERF-03 | Phase 1 | Pending |
 | PERS-01 | Phase 3 | Pending |
 | PERS-02 | Phase 2 | Pending |
 | PERS-03 | Phase 2 | Pending |
 
 **Coverage:**
-- v1 requirements: 48 total
-- Mapped to phases: 48
+- v1 requirements: 50 total
+- Mapped to phases: 50
 - Unmapped: 0 ✓
+
+**Phase distribution:**
+- Phase 1 (Foundation & Core Infrastructure): 10 requirements
+- Phase 2 (Dataset Generation & CLI): 16 requirements
+- Phase 3 (Evaluation Engine): 12 requirements
+- Phase 4 (Comparison & CI Integration): 6 requirements
+- Phase 5 (Performance Acceleration): 6 requirements
 
 ---
 *Requirements defined: 2026-02-16*
-*Last updated: 2026-02-16 after initial definition*
+*Last updated: 2026-02-16 after roadmap creation*
