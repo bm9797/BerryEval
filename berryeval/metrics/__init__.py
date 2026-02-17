@@ -14,19 +14,19 @@ logger = logging.getLogger(__name__)
 
 # Backend dispatch: try C extension, fall back to pure Python
 try:
-    from berryeval.metrics._native import (  # type: ignore[attr-defined]
+    from berryeval.metrics._native import (  # type: ignore[import-not-found]
         hit_rate as _hit_rate,
     )
-    from berryeval.metrics._native import (  # type: ignore[attr-defined]
+    from berryeval.metrics._native import (
         mrr as _mrr,
     )
-    from berryeval.metrics._native import (  # type: ignore[attr-defined]
+    from berryeval.metrics._native import (
         ndcg as _ndcg,
     )
-    from berryeval.metrics._native import (  # type: ignore[attr-defined]
+    from berryeval.metrics._native import (
         precision_at_k as _precision_at_k,
     )
-    from berryeval.metrics._native import (  # type: ignore[attr-defined]
+    from berryeval.metrics._native import (
         recall_at_k as _recall_at_k,
     )
 
