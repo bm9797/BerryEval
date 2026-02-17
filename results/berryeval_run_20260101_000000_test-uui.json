@@ -1,0 +1,50 @@
+{
+  "run_id": "test-uuid-1234",
+  "timestamp": "2026-01-01T00:00:00+00:00",
+  "config": {
+    "retriever": {
+      "type": "mock"
+    },
+    "evaluation": {
+      "k_values": [
+        2
+      ]
+    }
+  },
+  "dataset_path": "/private/var/folders/1x/6tn2jng55c1fd8qbzs3pl37c0000gn/T/pytest-of-benjaminmarks/pytest-294/test_evaluate_k_override0/dataset.jsonl",
+  "dataset_metadata": {
+    "model": "gpt-4",
+    "version": "0.1.0"
+  },
+  "num_queries": 2,
+  "metrics": [
+    {
+      "name": "recall@2",
+      "k": 2,
+      "mean": 0.75,
+      "values": []
+    },
+    {
+      "name": "precision@2",
+      "k": 2,
+      "mean": 0.5,
+      "values": []
+    },
+    {
+      "name": "mrr@2",
+      "k": 2,
+      "mean": 0.7,
+      "values": []
+    }
+  ],
+  "latency": {
+    "p50": 10.0,
+    "p95": 20.0,
+    "p99": 25.0,
+    "mean": 12.5,
+    "min_ms": 5.0,
+    "max_ms": 30.0,
+    "count": 2
+  },
+  "query_breakdowns": []
+}
